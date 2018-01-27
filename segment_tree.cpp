@@ -1,15 +1,29 @@
+/**
+ * @file    segment_tree.cpp
+ * @author  leemonage
+ * @date    1/28/2018
+ * @brief   segment tree implementation with some examples of usage
+ */
+
 #include <functional>
 #include <iostream>
 #include <vector>
 
-template<class T>
-class segment_tree {
+/**
+ * @brief  class segment_tree<T> implements the main functions
+ *         of simple segment tree -- update value in point and calculate
+ *         some function on segment [left, right].
+ */
+
+template<class T> class segment_tree {
 private:
-    size_t n;
-    std::vector<T> tree;
-    std::function<T(T, T)> foo;
+    size_t n;                     /* number of elements */
+    std::vector<T> tree;          /* information in vertices */
+    std::function<T(T, T)> foo;   /* function (by default sum of numbers) */
+
+    /* builds segment tree by given vector of elements */
     
-    void build(const std::vector<int>& vec, int v, size_t l, size_t r) {
+    void build(const std::vector<T>& vec, int v, size_t l, size_t r) {
         if (l == r) {
             tree[v] = vec[l];
         } else {
@@ -19,6 +33,8 @@ private:
             tree[v] = foo(tree[2 * v], tree[2 * v + 1]);
         }
     }
+
+    /* updates value in point */
     
     void update(const size_t& idx, const T& val, int v, size_t l, size_t r) {
         if (l == r) {
@@ -34,6 +50,8 @@ private:
             tree[v] = foo(tree[2 * v], tree[2 * v + 1]);
         }
     }
+
+    /* calculates function foo on segment [left, right] */
     
     T get(const size_t& left, const size_t& right, int v, size_t l, size_t r) {
         if (left <= l && r <= right)
@@ -54,14 +72,29 @@ private:
     }
     
 public:
+
+    /* default constructor */
+
+    segment_tree() {
+        n = 0;
+        tree.resize(0);
+        foo = [](T a, T b) { return a + b; }
+    }
+
+    /* constructor by number of elements and function */
+
     segment_tree(int n, const std::function<T(T, T)> foo) : n(n), foo(foo) {
         tree.assign(4 * n, T(0));
     }
+
+    /* constructor by number of elements */
     
     segment_tree(int n) : n(n) {
         tree.assign(4 * n, T(0));
         foo = [](T a, T b) { return a + b; };
     }
+
+    /* constructor by vector of elements and function */
     
     segment_tree(const std::vector<T>& vec, const std::function<T(T, T)> foo) : foo(foo) {
         n = vec.size();
@@ -70,6 +103,8 @@ public:
         if (n != 0)
             build(vec, 1, 0, n - 1);
     }
+
+    /* constructor by vector of elements */
     
     segment_tree(const std::vector<T>& vec) {
         n = vec.size();
