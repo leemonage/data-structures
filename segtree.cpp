@@ -2,8 +2,7 @@
 #include <iostream>
 #include <vector>
 
-template<class T>
-class segment_tree {
+template<class T> class segment_tree {
 private:
     size_t n;
     std::vector<T> tree;
