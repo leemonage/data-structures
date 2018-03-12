@@ -8,6 +8,7 @@
 #include <functional>
 #include <iostream>
 #include <vector>
+#include <utility>
 
 /**
  * @brief  class segment_tree<T> implements the main functions
@@ -75,22 +76,21 @@ public:
 
     /* default constructor */
 
-    segment_tree() {
-        n = 0;
+    segment_tree() : n(0) {
         tree.resize(0);
-        foo = [](T a, T b) { return a + b; }
+        foo = [](T a, T b) { return a + b; };
     }
 
     /* constructor by number of elements and function */
 
     segment_tree(int n, const std::function<T(T, T)> foo) : n(n), foo(foo) {
-        tree.assign(4 * n, T(0));
+        tree.assign(4 * n, T());
     }
 
     /* constructor by number of elements */
     
     segment_tree(int n) : n(n) {
-        tree.assign(4 * n, T(0));
+        tree.assign(4 * n, T());
         foo = [](T a, T b) { return a + b; };
     }
 
@@ -98,7 +98,7 @@ public:
     
     segment_tree(const std::vector<T>& vec, const std::function<T(T, T)> foo) : foo(foo) {
         n = vec.size();
-        tree.assign(4 * n, T(0));
+        tree.assign(4 * n, T());
         
         if (n != 0)
             build(vec, 1, 0, n - 1);
@@ -108,12 +108,45 @@ public:
     
     segment_tree(const std::vector<T>& vec) {
         n = vec.size();
-        tree.assign(4 * n, T(0));
+        tree.assign(4 * n, T());
         foo = [](T a, T b) { return a + b; };
         
         if (n != 0)
             build(vec, 1, 0, n - 1);
     }
+    
+    /* copy constructor */
+    
+    segment_tree(const segment_tree& oth) : n(oth.n), tree(oth.tree), foo(oth.foo) { }
+    
+    /* move constructor */
+    
+    segment_tree(segment_tree&& oth) noexcept :
+        n(std::move(oth.n)), tree(std::move(oth.tree)), foo(std::move(oth.foo)) { }
+    
+    /* copy operator = */
+    
+    segment_tree& operator =(const segment_tree& oth) {
+        n = oth.n;
+        tree = oth.tree;
+        foo = oth.foo;
+        return *this;
+    }
+    
+    /* move operator = */
+    
+    segment_tree& operator =(segment_tree&& oth) noexcept {
+        n = std::move(oth.n);
+        tree = std::move(oth.tree);
+        foo = std::move(oth.foo);
+        return *this;
+    }
+    
+    /* destructor */
+    
+    ~segment_tree() { }
+    
+    /* main functions */
     
     void update_point(size_t point, T new_val) {
         if (point < n)
@@ -149,4 +182,3 @@ int main() {
 
     return 0;
 }
-
